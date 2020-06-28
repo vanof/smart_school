@@ -1,7 +1,7 @@
 # ESP8266 
-![Screenshot](img/ESP8266_pinout.PNG)
+![Screenshot](img/ESP8266_pinout.png)
 # Installation ESP8266
-## Voraussetzungen
+## Примеры для обдумывания
 wpa2 based on 
 https://github.com/jtuttas/ESP8266-WPA2-Enterprise
 
@@ -13,7 +13,7 @@ https://github.com/espressif/ESP8266_RTOS_SDK/blob/master/examples/wifi/wpa2_ent
 https://cxemotexnika.org/2018/11/eksperimenty-s-wifi-modulyami-na-osnove-soc-esp8266/
 https://github.com/beta-tank/ESP8266-WPA2-Enterprise-PEAP-demo
 https://github.com/espressif/arduino-esp32/issues/1381
-## Vorbereitungen
+## Логин и пароль
 
 ```c++
 static const char* ssid = "MMBBS-Intern";
@@ -21,5 +21,3 @@ static const char* ssid = "MMBBS-Intern";
 #define EAP_USERNAME "tuttas"
 #define EAP_PASSWORD "geheim!"
 ```
-## Verkabelung
-![Wireing](doc/sketch32_Steckplatine.png)
