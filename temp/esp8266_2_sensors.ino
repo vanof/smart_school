@@ -29,7 +29,12 @@ const char* serverName = "http://smart.1561.moscow/post-data.php";
 
 // Keep this API Key value to be compatible with the PHP code provided in the project page. 
 // If you change the apiKeyValue value, the PHP file /post-data.php also needs to have the same key 
-String apiKeyValue = "tPmAT5Ab3j7F9";
+String apiKeyValue = "tPmAT5Ab3j7C8";
+
+String sensor_name_2 = "HTU21D";
+String sensor_name_3 = "AHT10";
+int sensor_id_2 = 2;
+int sensor_id_3 = 3;
 
 void setup() {
   Serial.begin(115200);
@@ -65,20 +70,7 @@ void setup() {
 }
 
 void loop() {
-
-  Serial.println(F("HTU21D sensor is active"));
-  Serial.print(F("Humidity............: ")); Serial.print(myHTU21D.readHumidity());            Serial.println(F(" +-2%"));
-  Serial.print(F("Compensated Humidity: ")); Serial.print(myHTU21D.readCompensatedHumidity()); Serial.println(F(" +-2%"));
-  Serial.print(F("Temperature.........: ")); Serial.print(myHTU21D.readTemperature()); Serial.println(F(" +-0.3C"));
-  delay(5000);
-
  
-  Serial.println(F("AHT10 sensor is active"));
-  Serial.print(F("Temperature.........: ")); Serial.print(myAHT10.readTemperature(AHT10_FORCE_READ_DATA)); Serial.println(F(" +-0.3C"));
-  Serial.print(F("Humidity............: ")); Serial.print(myAHT10.readHumidity(AHT10_USE_READ_DATA));Serial.println(F(" +-2%"));
-  delay(60000);
-  
-  /**
   //Check WiFi connection status
   if(WiFi.status()== WL_CONNECTED){
     HTTPClient http;
@@ -90,27 +82,26 @@ void loop() {
     http.addHeader("Content-Type", "application/x-www-form-urlencoded");
     
     // Prepare your HTTP POST request data
-    String httpRequestData = "api_key=" + apiKeyValue + "&value1=" + String(myHTU21D.readTemperature())
-                           + "&value2=" + String(myHTU21D.readCompensatedHumidity()) + "&value3=" + String(myHTU21D.readHumidity()/100.0F) + "";
+    /**
+     * String sensor_name_2 = "HTU21D";
+     * String sensor_name_3 = "AHT10";
+     * int sensor_id_2 = 2;
+     * int sensor_id_3 = 3;
+     * 
+     */
+    String httpRequestData = "api_key=" + apiKeyValue
+                           + "&sensor_id=" + String(sensor_id_2)
+                           + "&sensor_name=" + sensor_name_2
+                           + "&value1=" + String(myHTU21D.readTemperature())
+                           + "&value2=" + String(myHTU21D.readCompensatedHumidity()) 
+                           + "&value3=" + String(myAHT10.readTemperature(AHT10_FORCE_READ_DATA))
+                           + "&value4=" + String(myAHT10.readHumidity(AHT10_USE_READ_DATA)) + "";
     Serial.print("httpRequestData: ");
     Serial.println(httpRequestData);
     
-    // You can comment the httpRequestData variable above
-    // then, use the httpRequestData variable below (for testing purposes without the BME280 sensor)
-    //String httpRequestData = "api_key=tPmAT5Ab3j7F9&value1=24.75&value2=49.54&value3=1005.14";
-
-    // Send HTTP POST request
-    int httpResponseCode = http.POST(httpRequestData);
+   int httpResponseCode = http.POST(httpRequestData);
      
-    // If you need an HTTP request with a content type: text/plain
-    //http.addHeader("Content-Type", "text/plain");
-    //int httpResponseCode = http.POST("Hello, World!");
-    
-    // If you need an HTTP request with a content type: application/json, use the following:
-    //http.addHeader("Content-Type", "application/json");
-    //int httpResponseCode = http.POST("{\"value1\":\"19\",\"value2\":\"67\",\"value3\":\"78\"}");
-    
-    if (httpResponseCode>0) {
+     if (httpResponseCode>0) {
       Serial.print("HTTP Response code: ");
       Serial.println(httpResponseCode);
     }
@@ -125,6 +116,6 @@ void loop() {
     Serial.println("WiFi Disconnected");
   }
   //Send an HTTP POST request every 30 seconds
-  delay(600000);  
-  */
+  delay(60000);  
+  
 }
