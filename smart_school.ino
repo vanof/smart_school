@@ -3,7 +3,6 @@ This sensor uses I2C bus to communicate, specials pins are required to interface
   SDA                    SCL
 GPIO4/D2               GPIO5/D1
 */
-
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
@@ -95,5 +94,5 @@ void loop() {
     Serial.println("WiFi Disconnected");
   }
   //Send an HTTP POST request every 30 seconds
-  delay(600000);  
+  delay(1800000);  
 }
