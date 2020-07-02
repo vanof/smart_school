@@ -50,6 +50,7 @@ void loop() {
   }else{
       Serial.println("Connection to server failed");
   }
+
   
   while(client.connected()){
     if(client.available()){
