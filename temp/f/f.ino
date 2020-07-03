@@ -22,20 +22,16 @@ void setup() {
     Serial.println("Failed to configure Ethernet using DHCP");
     while(1);
   }
+}
+
+void loop() {  
   sensors.requestTemperatures(); 
   float temperatureC = sensors.getTempCByIndex(0);
   Serial.print(temperatureC);
   Serial.println("ºC");
-  delay(2000);
-}
-
-void loop() {  
-  float temperatureC = sensors.getTempCByIndex(0);
-  Serial.print(temperatureC);
-  Serial.println("ºC");
   
-  String httpRequestData = "api_key=" + apiKeyValue + "&value1=" + String(sensors.getTempCByIndex(0))
-                           + "&value2=" + String(20) + "&value3=" + String(30) + "";
+  String httpRequestData = "api_key=" + apiKeyValue + "&value1=" + String(temperatureC)
+                           + "&value2=" + String(0) + "&value3=" + String(0) + "";
                            
   if (client.connect(server,80)){
       Serial.println("Connected to server");
@@ -52,11 +48,11 @@ void loop() {
   }
 
   
-  while(client.connected()){
+  /*while(client.connected()){
     if(client.available()){
       char c = client.read();
       Serial.print(c);  
     }
-  }
-  delay(180000);
+ }*/
+  delay(18000);
 }
