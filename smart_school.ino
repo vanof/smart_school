@@ -4,6 +4,14 @@
 #include <DHT.h>
 #include <DHT_U.h>
 
+//для калибровки датчиком ds18b20 
+#include <OneWire.h>
+#include <DallasTemperature.h>
+const int oneWireBus = 2;  
+OneWire oneWire(oneWireBus);
+DallasTemperature sensors(&oneWire);
+float temperature_calibration = 0.0;
+
 String apiKeyValue = "tPmAT5Ab3j7F9";
 uint8_t mac[6] = {0x00,0x01,0x02,0x03,0x04,0x05};
 
@@ -17,7 +25,7 @@ char server[] = "smart.1561.moscow";
 //#define DHTTYPE    DHT21     // DHT 21 (AM2301)
 
 #define DHTPIN1 7
-#define DHTPIN2 8
+#define DHTPIN2 10
 /*
 #define DHTPIN3 3
 #define DHTPIN4 5
@@ -59,6 +67,9 @@ const unsigned long postingInterval = 10*1000;  // delay between updates, in mil
 void setup() {
   Serial.begin(9600);
 
+  //ds18b20
+  sensors.begin();
+
   //инициализация датчиков
   for (auto& sensor : dht) {
     sensor.begin();
@@ -99,7 +110,11 @@ void loop() {
    httpRequest();  //prototype of void loop
   }
   */
-  
+
+  //ds18b20
+  sensors.requestTemperatures(); 
+  temperature_calibration = sensors.getTempCByIndex(0);
+
   for (int i = 0; i < SENSOR_AMOUNT; i++) {
     temperature[i] = dht[i].readTemperature();
     humidity[i] = dht[i].readHumidity();
@@ -110,8 +125,8 @@ void loop() {
                            + "&value2=" + String(humidity[0])
                            + "&value3=" + String(temperature[1]) 
                            + "&value4=" + String(humidity[1])
+                           + "&calibration=" + String(temperature_calibration)
                            /*
-                           + "&value5=" + String(humidity[0])
                            + "&value6=" + String(temperature[1]) 
                            + "&value7=" + String(temperature[0])
                            + "&value8=" + String(humidity[0])
