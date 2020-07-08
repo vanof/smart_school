@@ -4,95 +4,90 @@
 #include <DHT.h>
 #include <DHT_U.h>
 
-#define DHT_1 7
-#define DHT_2 2
+//ds18b20 lib
+#include <OneWire.h>
+#include <DallasTemperature.h>
+
+String apiKeyValue = "tPmAT5Ab3j7F9";
+uint8_t mac[6] = {0x00,0x01,0x02,0x03,0x04,0x05};
 
 // Uncomment the type of sensor in use:
 #define DHTTYPE    DHT11     // DHT 11
 //#define DHTTYPE    DHT22     // DHT 22 (AM2302)
 //#define DHTTYPE    DHT21     // DHT 21 (AM2301)
 
-DHT_Unified dht(DHT_1, DHTTYPE);
+#define DHTPIN1 7
+#define DHTPIN2 8
+#define DHTPIN3 9
+#define DHTPIN4 10
 
-uint32_t delayMS;
+DHT dht[] = {
+  {DHTPIN1, DHTTYPE},
+  {DHTPIN2, DHTTYPE},
+  {DHTPIN3, DHTTYPE},
+  {DHTPIN4, DHTTYPE},
+};
 
-String apiKeyValue = "tPmAT5Ab3j7F9";
-uint8_t mac[6] = {0x00,0x01,0x02,0x03,0x04,0x05};
+float humidity[4];
+float temperature[4];
+float temperature_calibration = 0.0;
+
+//ds18b20 для калибровки
+const int oneWireBus = 8;  
+OneWire oneWire(oneWireBus);
+DallasTemperature sensors(&oneWire);
 
 EthernetClient client;
 char server[] = "smart.1561.moscow";
 
 void setup() {
   Serial.begin(9600);
-  dht.begin();
+  sensors.begin();
+  for (auto& sensor : dht) {
+    sensor.begin();
+  }
+   
+  //ds18b20 read temperature
+  sensors.requestTemperatures(); 
+  temperature_calibration = sensors.getTempCByIndex(0);
+  Serial.print(F("temperature_calibration:")); Serial.print(temperature_calibration); Serial.println("ºC");
+  
+  for (int i = 0; i < 4; i++) {
+    temperature[i] = dht[i].readTemperature();
+    humidity[i] = dht[i].readHumidity();
+  }
 
+  for (int i = 0; i < 4; i++) {
+    Serial.print(F("Temperature "));
+    Serial.print(i);
+    Serial.println(temperature[i]);
+    Serial.print(F("Humidity "));
+    Serial.print(i);
+    Serial.println(humidity[i]);
+  }
+
+    //start the Ethernet connection:
+  Serial.println("Initialize Ethernet with DHCP:");
   if(Ethernet.begin(mac) == 0){
     Serial.println("Failed to configure Ethernet using DHCP");
     while(1);
   }
-
-   dht.begin();
-  Serial.println(F("DHTxx Unified Sensor Example"));
-  // Print temperature sensor details.
-  sensor_t sensor;
-  dht.temperature().getSensor(&sensor);
-  Serial.println(F("------------------------------------"));
-  Serial.println(F("Temperature Sensor"));
-  Serial.print  (F("Sensor Type: ")); Serial.println(sensor.name);
-  Serial.print  (F("Driver Ver:  ")); Serial.println(sensor.version);
-  Serial.print  (F("Unique ID:   ")); Serial.println(sensor.sensor_id);
-  Serial.print  (F("Max Value:   ")); Serial.print(sensor.max_value); Serial.println(F("°C"));
-  Serial.print  (F("Min Value:   ")); Serial.print(sensor.min_value); Serial.println(F("°C"));
-  Serial.print  (F("Resolution:  ")); Serial.print(sensor.resolution); Serial.println(F("°C"));
-  Serial.println(F("------------------------------------"));
-  // Print humidity sensor details.
-  dht.humidity().getSensor(&sensor);
-  Serial.println(F("Humidity Sensor"));
-  Serial.print  (F("Sensor Type: ")); Serial.println(sensor.name);
-  Serial.print  (F("Driver Ver:  ")); Serial.println(sensor.version);
-  Serial.print  (F("Unique ID:   ")); Serial.println(sensor.sensor_id);
-  Serial.print  (F("Max Value:   ")); Serial.print(sensor.max_value); Serial.println(F("%"));
-  Serial.print  (F("Min Value:   ")); Serial.print(sensor.min_value); Serial.println(F("%"));
-  Serial.print  (F("Resolution:  ")); Serial.print(sensor.resolution); Serial.println(F("%"));
-  Serial.println(F("------------------------------------"));
-  // Set delay between sensor readings based on sensor details.
-  delayMS = sensor.min_delay / 1000;
+  Serial.print("IP address: ");
+  Serial.println(Ethernet.localIP());  
+  delay(1000);  
 }
 
 void loop() {  
-  float humidity = 0;
-  float temperatureC = 0;
-  //delay(delayMS);
-  // Get temperature event and print its value.
-  sensors_event_t event;
-  dht.temperature().getEvent(&event);
-  if (isnan(event.temperature)) {
-    Serial.println(F("Error reading temperature!"));
-  }
-  else {
-    Serial.print(F("Temperature: "));
-    temperatureC = event.temperature;
-    Serial.print(temperatureC);
-    Serial.println(F("°C"));
-  }
-  // Get humidity event and print its value.
-  dht.humidity().getEvent(&event);
-  if (isnan(event.relative_humidity)) {
-    Serial.println(F("Error reading humidity!"));
-  }
-  else {
-    Serial.print(F("Humidity: "));
-    humidity = event.relative_humidity;
-    Serial.print(humidity);
-    Serial.println(F("%"));
-  }
-
-
-
   
-  String httpRequestData = "api_key=" + apiKeyValue + "&value1=" + String(temperatureC)
-                           + "&value2=" + String(humidity) + "&value3=" + String(0) + "";
-                           
+  for (int i = 0; i < 4; i++) {
+    temperature[i] = dht[i].readTemperature();
+    humidity[i] = dht[i].readHumidity();
+  }
+
+   String httpRequestData = "api_key=" + apiKeyValue + "&value1=" + String(temperature[0])
+                           + "&value2=" + String(humidity[0]) + "&value3=" + String(temperature[1]) + "";
+
+  Serial.println(httpRequestData);
   if (client.connect(server,80)){
       Serial.println("Connected to server");
       client.println("POST /post-data.php HTTP/1.1");
@@ -107,12 +102,5 @@ void loop() {
       Serial.println("Connection to server failed");
   }
 
-  
-  /*while(client.connected()){
-    if(client.available()){
-      char c = client.read();
-      Serial.print(c);  
-    }
- }*/
-  delay(1800000);
+  delay(10000);
 }
