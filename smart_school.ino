@@ -20,7 +20,7 @@ uint8_t mac[6] = {0x00,0x01,0x02,0x03,0x04,0x05};
 EthernetClient client;
 char server[] = "smart.1561.moscow";
 
-#define SENSOR_AMOUNT 2 
+#define SENSOR_AMOUNT 3
 #define MAX_SENSOR_AMOUNT 4 
 
 #define DHTTYPE    DHT11     // DHT 11
