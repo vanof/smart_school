@@ -15,6 +15,7 @@ float temperature_calibration = 0.0;
 
 //уникальный ключ для записи в базу данных + разный мак-адрес
 String apiKeyValue = "tPmAT5Ab3j7F9";
+//String apiKeyValue = "tPmAT5Ab3j7C3";
 uint8_t mac[6] = {0x00,0x01,0x02,0x03,0x04,0x05};
 
 EthernetClient client;
@@ -136,6 +137,6 @@ void loop() {
     Serial.println("connection failed");
   }
   
-  delay(300000);  //5 минут
-  //delay(900000);  //15 минут частота опроса
+  //delay(300000);  //5 минут
+  delay(900000);  //15 минут частота опроса
 }
