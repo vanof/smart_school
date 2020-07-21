@@ -14,7 +14,7 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-//конфигурация датчика ds18b20 
+// конфигурация датчика ds18b20 
 const int oneWireBus = 2;  
 OneWire oneWire(oneWireBus);
 DallasTemperature sensors(&oneWire);
@@ -51,11 +51,10 @@ float temperature[MAX_SENSOR_AMOUNT];
 // мак адрес для плат должен быть разным!
 // assign a MAC address for the ethernet controller.
 // fill in your address here:
-byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
+//byte mac[] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
 //byte mac[] = {0x00,0x01,0x02,0x03,0x04,0x05};
 //byte mac[] = {0x06,0x07,0x02,0x03,0x04,0x05};
-//byte mac[] = {0x02,0x04,0x02,0x03,0x04,0x05};
-
+byte mac[] = {0x02,0x04,0x02,0x03,0x04,0x05};
 
 // Set the static IP address to use if the DHCP fails to assign
 IPAddress ip(192, 168, 0, 177);
@@ -65,12 +64,11 @@ EthernetClient client;
 char server[] = "smart.1561.moscow";
 //IPAddress server(64,131,82,241);
 
-//уникальный ключ для записи в базу данных
+// уникальный ключ для записи в базу данных
 //String apiKeyValue = "tPmAT5Ab3j7F9";  //тестовый ключ
-//String apiKeyValue = "tPmAT5Ab3j7D1";  //первый этаж
-//String apiKeyValue = "tPmAT5Ab3j7D2";  //второй этаж
-//String apiKeyValue = "tPmAT5Ab3j7D3";  //третий этаж
-String apiKeyValue = "tPmAT5Ab3j7F9";
+//String apiKeyValue = "D1tPmAT5Ab3j7";  //первый этаж
+//String apiKeyValue = "D2tPmAT5Ab3j7";  //второй этаж
+String apiKeyValue = "D3tPmAT5Ab3j7";  //третий этаж
 
 unsigned long lastConnectionTime = 0;           // last time you connected to the server, in milliseconds
 const unsigned long postingInterval = 60*1000;  // delay between updates, in milliseconds
@@ -128,6 +126,13 @@ void setup() {
   }
   // give the Ethernet shield a second to initialize:
   delay(1000);
+
+  //рандомная пауза, иначе контроллеры забрасывают друг-друга пакетами
+  randomSeed(analogRead(0));
+  int randDelay = random(1000, 2500);
+  Serial.println(randDelay);
+  delay(randDelay);
+  Serial.println("Run!");
 }
 
 void loop() {
@@ -163,10 +168,10 @@ void loop() {
 
   httpRequest(httpRequestData);
 
-  delay(30000);
+  //delay(30000);
   //delay(60000);     //1 минута
   //delay(300000);  //5 минут
-  //delay(900000);  //15 минут частота опроса
+  delay(900000);  //15 минут частота опроса
 }
 
 // this method makes a HTTP connection to the server:
