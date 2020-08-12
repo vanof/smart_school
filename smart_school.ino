@@ -219,11 +219,11 @@ delay(200);
 while (client.available())
   {
     c = client.read();
-    if ( c=='1')
+    if (c=='1')
     {
       state=true;
     }
-    if ( c=='0')
+    if (c=='0')
     {
       state=false;
     }
