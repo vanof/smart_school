@@ -13,11 +13,11 @@
 $servername = "localhost";
 
 // REPLACE with your Database name
-$dbname = "h005344445_smart";
+$dbname = "";
 // REPLACE with Database user
-$username = "h005344445_smart";
+$username = "";
 // REPLACE with Database user password
-$password = "Nevermore32";
+$password = "";
 
 // Keep this API Key value to be compatible with the ESP32 code provided in the project page. If you change this value, the ESP32 sketch needs to match
 $api_key_value_1 = "tPmAT5Ab3j7F9";

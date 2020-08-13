@@ -16,11 +16,11 @@ $filename = date('Y') . "_" .  date('m') . "_" .  date('d') . "_temperatures.xls
 $servername = "localhost";
 
 // REPLACE with your Database name
-$dbname = "h005344445_smart";
+$dbname = "";
 // REPLACE with Database user
-$username = "h005344445_smart";
+$username = "";
 // REPLACE with Database user password
-$password = "Nevermore32";
+$password = "";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);

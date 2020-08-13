@@ -46,7 +46,7 @@ float humidity[SENSOR_AMOUNT];
 float temperature[SENSOR_AMOUNT];
 
 // Время опроса
-#define TIME 10000
+#define TIME 900000
 
 // конфигурация интернет соединения
 // мак адрес для плат должен быть разным!
@@ -194,17 +194,7 @@ Serial.println(httpRequestData);
 
 if (client.connect(server, 80))
 {
-  Serial.println("Get data from file"); 
-  client.print( "GET /add_data.php?");
-  client.print("&");
-  client.println( " HTTP/1.1");
-  client.print( "Host: " );
-  client.println(server);
-  client.println( "Connection: close" );
-  client.println();
-  client.println();
-
-  Serial.println("Connected to server");
+  Serial.println("Connected to server.");
   client.println("POST /post-data.php HTTP/1.1");
   client.println("Host: smart.1561.moscow");
   client.println("Content-Type: application/x-www-form-urlencoded");
@@ -213,10 +203,21 @@ if (client.connect(server, 80))
   client.println();
   client.println(httpRequestData);
   client.println();
+  Serial.println("POST request done.");
+  delay(200);
+  Serial.println("GET data from file."); 
+  client.print("GET /add_data.php?");
+  client.print("&");
+  client.println( " HTTP/1.1");
+  client.print( "Host: " );
+  client.println(server);
+  client.println( "Connection: close" );
+  client.println();
+  client.println();
+  Serial.println("GET request done.");
+  delay(100);
 
-delay(200);
-
-while (client.available())
+  while (client.available())
   {
     c = client.read();
     if (c=='1')
